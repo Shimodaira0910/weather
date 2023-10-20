@@ -11,9 +11,7 @@ import (
 	"github.com/Shimodaira0910/weather/models"
 )	
 
-type Weather struct{
-	Main string `json:"main"`
-}
+type Weather struct{}
 
 func (w *Weather)GetWeatherInfo(cityName string) (string, error){
 	env := env.Env{}
@@ -29,7 +27,6 @@ func (w *Weather)GetWeatherInfo(cityName string) (string, error){
 	}
 
 	defer response.Body.Close()
-
 	body, err := io.ReadAll(response.Body)
     if err != nil {
         return "", err
