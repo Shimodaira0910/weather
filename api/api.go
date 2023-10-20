@@ -1,26 +1,24 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"encoding/json"
+	"time"
 
 	"github.com/Shimodaira0910/weather/env"
+	"github.com/Shimodaira0910/weather/models"
 )	
 
 type Weather struct{
 	Main string `json:"main"`
 }
 
-type ApiResponse struct {
-	Weather []Weather `json:"weather"`
-}
-
 func (w *Weather)GetWeatherInfo(cityName string) (string, error){
 	env := env.Env{}
 	apiEndpoint := env.LoadEnv("API_ENDPOINT")
-	apiKey := env.LoadEnv("WEATHER_API_TOKEN")
+	apiKey := env.LoadEnv("WEATHER_API_TOKEN") 
 
 	url := fmt.Sprintf("%s?q=%s&lang=%s&appid=%s", apiEndpoint, cityName, "ja", apiKey)
 	response, err := http.Get(url)
@@ -37,12 +35,19 @@ func (w *Weather)GetWeatherInfo(cityName string) (string, error){
         return "", err
     }
 	
-	var apiRes ApiResponse 
-	if err := json.Unmarshal(body, &apiRes); err != nil {
+	weather := models.WeatherData{}
+	//var apiRes ApiResponse 
+	if err := json.Unmarshal(body, &weather); err != nil {
 		return "", err
 	}
 
-	fmt.Println(apiRes.Weather[0].Main)
+	fmt.Println("現在の時刻は" + convertUnixtmToString(weather.Timezone))
+	fmt.Println(weather.Name + "の天気は" + weather.Weather[0].Description + "です。")
 	return "", err
 }
 
+func convertUnixtmToString(unixtime int) string{
+	dtFormUnix := time.Unix(int64(unixtime), 0)
+	formattedTime := dtFormUnix.Format("15:04:05")
+	return formattedTime
+}
