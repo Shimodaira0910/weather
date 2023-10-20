@@ -8,6 +8,8 @@ import (
 
 type Env struct{}
 
+// 環境変数を読み込むだけ
+
 func (e *Env) LoadEnv(envName string) (string){
 	err := godotenv.Load("./.env")
 	if err != nil{
