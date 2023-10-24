@@ -33,8 +33,8 @@ func (w *Weather)GetWeatherInfo(cityName string) (string, error){
     }
 	
 	weather := models.WeatherData{}
-	//var apiRes ApiResponse 
 	if err := json.Unmarshal(body, &weather); err != nil {
+		fmt.Printf("存在しない都市名です")
 		return "", err
 	}
 
