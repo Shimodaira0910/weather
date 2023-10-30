@@ -13,6 +13,7 @@ import (
 )
 
 // weatherCmd represents the weather command
+// test
 var weatherCmd = &cobra.Command{
 	Use:   "weather",
 	Run: func(cmd *cobra.Command, args []string) {
