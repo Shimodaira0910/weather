@@ -20,6 +20,7 @@ func (e *Env) LoadEnv(envName string) (string){
 	env := os.Getenv(envName)
 	if env == ""{
 		fmt.Println(envName + "が設定されていません")
+		return ""
 	} 
 	
 	return env

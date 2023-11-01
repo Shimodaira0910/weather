@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/Shimodaira0910/weather/env"
@@ -18,9 +19,8 @@ func (w *Weather)GetWeatherInfo(cityName string) (string, error){
 	apiEndpoint := env.LoadEnv("API_ENDPOINT")
 	apiKey := env.LoadEnv("WEATHER_API_TOKEN") 
 
-	url := fmt.Sprintf("%s?q=%s&lang=%s&appid=%s", apiEndpoint, cityName, "ja", apiKey)
+	url := fmt.Sprintf("%s?q=%s&lang=%s&appid=%s&units=%s", apiEndpoint, cityName, "ja", apiKey, "metric")
 	response, err := http.Get(url)
-
 	if err != nil {
 		fmt.Println("リクエストエラー:", err)
 		return "", err
@@ -40,6 +40,7 @@ func (w *Weather)GetWeatherInfo(cityName string) (string, error){
 
 	fmt.Println("現在の時刻は" + convertUnixtmToString(weather.Timezone))
 	fmt.Println(weather.Name + "の天気は" + weather.Weather[0].Description + "です。")
+	fmt.Println(weather.Name + "の最高気温は" + strconv.FormatFloat(weather.Main.TempMax, 'f', 2, 64) + "です。")
 	return "", err
 }
 
@@ -48,3 +49,4 @@ func convertUnixtmToString(unixtime int) string{
 	formattedTime := dtFormUnix.Format("15:04:05")
 	return formattedTime
 }
+
