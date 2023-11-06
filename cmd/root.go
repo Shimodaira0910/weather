@@ -23,7 +23,7 @@ package cmd
 
 import (
 	"os"
-
+	"fmt"
 	"github.com/Shimodaira0910/weather/api"
 	"github.com/spf13/cobra"
 )
@@ -35,8 +35,17 @@ var rootCmd = &cobra.Command{
 	Use:   "city",
 	Short: "A brief description of your application",
 	Run: func(cmd *cobra.Command, args []string) {
+		cityName := ""
+		for cityName == ""{
+			fmt.Println("検索したい都市名を、ローマ字で入力してください(頭文字を大文字で入力してください)")
+			_, err := fmt.Scanln(&cityName)
+
+			if err != nil {
+				fmt.Println("都市名を入力してください。")
+			}
+		}
 		api := api.Weather{}
-		api.GetWeatherInfo("Osaka")
+		api.GetWeatherInfo(cityName)
 	},
 }
 
