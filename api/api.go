@@ -10,6 +10,7 @@ import (
 
 	"github.com/Shimodaira0910/weather/env"
 	"github.com/Shimodaira0910/weather/models"
+	"github.com/Shimodaira0910/weather/constants"
 )	
 
 type Weather struct{}
@@ -17,9 +18,12 @@ type Weather struct{}
 func (w *Weather)GetWeatherInfo(cityName string) (string, error){
 	env := env.Env{}
 	apiEndpoint := env.LoadEnv("API_ENDPOINT")
-	apiKey := env.LoadEnv("WEATHER_API_TOKEN") 
+	apiKey := env.LoadEnv("WEATHER_API_TOKEN")
+	
+	lang := constants.Lang
+	tmp  := constants.Tmp 
 
-	url := fmt.Sprintf("%s?q=%s&lang=%s&appid=%s&units=%s", apiEndpoint, cityName, "ja", apiKey, "metric")
+	url := fmt.Sprintf("%s?q=%s&lang=%s&appid=%s&units=%s", apiEndpoint, cityName, lang, apiKey, tmp)
 	response, err := http.Get(url)
 	if err != nil {
 		fmt.Println("リクエストエラー:", err)
