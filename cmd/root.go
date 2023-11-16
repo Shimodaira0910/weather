@@ -26,6 +26,8 @@ import (
 	"fmt"
 	"github.com/Shimodaira0910/weather/api"
 	"github.com/spf13/cobra"
+	"github.com/Shimodaira0910/weather/env"
+	"github.com/Shimodaira0910/weather/constants"
 )
 
 
@@ -44,8 +46,15 @@ var rootCmd = &cobra.Command{
 				fmt.Println("都市名を入力してください。")
 			}
 		}
+		env := env.Env{}
+		apiEndpoint := env.LoadEnv("API_ENDPOINT")
+		apiKey := env.LoadEnv("WEATHER_API_TOKEN")
+	
+		lang := constants.Lang
+		tmp  := constants.Tmp 
+
 		api := api.Weather{}
-		api.GetWeatherInfo(cityName)
+		api.GetWeatherInfo(apiEndpoint, apiKey, lang, tmp, cityName)
 	},
 }
 
