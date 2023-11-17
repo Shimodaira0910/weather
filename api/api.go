@@ -31,20 +31,22 @@ func (w *Weather)GetWeatherInfo(apiEndpoint string, apiKey string, lang string, 
 		return "", fmt.Errorf("invalid city name: %v", err)
 	}
 
-	printWeatherInfo(weather)
+	weatherInfo := formatWeatherInfo(weather)
+	fmt.Print(weatherInfo)
 	return "", nil
 }
 
 // 現在時刻の取得
-func convertNowtmToString(unixtime int) string{
+func convertNowtmToString() string{
 	nowTime := time.Now()
 	toStringNowTime := nowTime.Format("15:04:05")	
 	return toStringNowTime
 }
 
-// 取得した天気のデータを出力する
-func printWeatherInfo(weather models.WeatherData){
-	fmt.Printf("現在の時刻は%sです。\n" , convertNowtmToString(weather.Timezone))
-	fmt.Printf("%sの天気は%sです。\n",weather.Name,weather.Weather[0].Description)
-	fmt.Printf("%sの最高気温は%.2fです。\n", weather.Name, weather.Main.TempMax)
+// 取得した天気のデータをフォーマット化(このメソッドの責務をフォーマット化のみにするため)
+func formatWeatherInfo(weather models.WeatherData) string{
+	currentTime := convertNowtmToString()
+	weatherDescription := fmt.Sprintf("%sの天気は%sです。\n", weather.Name, weather.Weather[0].Description)
+	temperatureInfo := fmt.Sprintf("%sの最高気温は%.2fです。\n", weather.Name, weather.Main.TempMax)
+	return fmt.Sprintf("現在の時刻は%sです。\n%s%s", currentTime, weatherDescription, temperatureInfo)
 }
