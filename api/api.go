@@ -5,44 +5,46 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"time"
 	"github.com/Shimodaira0910/weather/models"
 )	
 
 type Weather struct{}
 
-func (w *Weather)GetWeatherInfo(apiEndpoint string, apiKey string, lang string, tmp string, cityName string) (string){
+// api呼び出し
+func (w *Weather)GetWeatherInfo(apiEndpoint string, apiKey string, lang string, tmp string, cityName string) (string, error){
 	url := fmt.Sprintf("%s?q=%s&lang=%s&appid=%s&units=%s", apiEndpoint, cityName, lang, apiKey, tmp)
 
 	response, err := http.Get(url)
 	if err != nil {
-		fmt.Println("リクエストエラー:", err)
-		return "request error"
+		return "", fmt.Errorf("request error: %v", err)
 	}
 
 	defer response.Body.Close()
 	body, err := io.ReadAll(response.Body)
     if err != nil {
-		fmt.Println(err)
-        return "read error"
+		return "", fmt.Errorf("read error: %v", err)
     }
 	
 	weather := models.WeatherData{}
 	if err := json.Unmarshal(body, &weather); err != nil {
-		fmt.Println("存在しない都市名です", err)
-		return "not exist city"
+		return "", fmt.Errorf("invalid city name: %v", err)
 	}
 
-	fmt.Println("現在の時刻は" + convertNowtmToString(weather.Timezone))
-	fmt.Println(weather.Name + "の天気は" + weather.Weather[0].Description + "です。")
-	fmt.Println(weather.Name + "の最高気温は" + strconv.FormatFloat(weather.Main.TempMax, 'f', 2, 64) + "です。")
-	return "ok"
+	printWeatherInfo(weather)
+	return "", nil
 }
 
+// 現在時刻の取得
 func convertNowtmToString(unixtime int) string{
 	nowTime := time.Now()
 	toStringNowTime := nowTime.Format("15:04:05")	
 	return toStringNowTime
 }
 
+// 取得した天気のデータを出力する
+func printWeatherInfo(weather models.WeatherData){
+	fmt.Printf("現在の時刻は%sです。\n" , convertNowtmToString(weather.Timezone))
+	fmt.Printf("%sの天気は%sです。\n",weather.Name,weather.Weather[0].Description)
+	fmt.Printf("%sの最高気温は%.2fです。\n", weather.Name, weather.Main.TempMax)
+}
