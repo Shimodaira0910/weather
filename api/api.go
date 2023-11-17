@@ -21,6 +21,7 @@ func (w *Weather)GetWeatherInfo(apiEndpoint string, apiKey string, lang string, 
 	}
 
 	defer response.Body.Close()
+
 	body, err := io.ReadAll(response.Body)
     if err != nil {
 		return "", fmt.Errorf("read error: %v", err)
@@ -47,6 +48,7 @@ func convertNowtmToString() string{
 func formatWeatherInfo(weather models.WeatherData) string{
 	currentTime := convertNowtmToString()
 	weatherDescription := fmt.Sprintf("%sの天気は%sです。\n", weather.Name, weather.Weather[0].Description)
-	temperatureInfo := fmt.Sprintf("%sの最高気温は%.2fです。\n", weather.Name, weather.Main.TempMax)
-	return fmt.Sprintf("現在の時刻は%sです。\n%s%s", currentTime, weatherDescription, temperatureInfo)
+	maxTemperatureInfo := fmt.Sprintf("%sの最高気温は%.2fです。\n", weather.Name, weather.Main.TempMax)
+    minTemperatureInfo := fmt.Sprintf("%sの最低気温は%.2fです。\n",weather.Name,weather.Main.TempMin)
+	return fmt.Sprintf("現在の時刻は%sです。\n%s%s%s", currentTime, weatherDescription, maxTemperatureInfo, minTemperatureInfo)
 }
