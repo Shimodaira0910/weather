@@ -54,7 +54,10 @@ var rootCmd = &cobra.Command{
 		tmp  := constants.Tmp 
 
 		api := api.Weather{}
-		api.GetWeatherInfo(apiEndpoint, apiKey, lang, tmp, cityName)
+		_, err := api.GetWeatherInfo(apiEndpoint, apiKey, lang, tmp, cityName)
+		if err != nil{
+			fmt.Println(err)
+		}
 	},
 }
 
